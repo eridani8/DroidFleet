@@ -1,5 +1,6 @@
 ﻿using DroidFleet.Extensions;
 using DroidFleet.Service;
+using DroidFleet.Service.Scripts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -32,7 +33,7 @@ try
         client.BaseAddress = new Uri("http://85.198.111.231:6739");
     });
     builder.Services.AddSingleton<EmulatorHandler>();
-    builder.Services.AddSingleton<UploadToInst>();
+    builder.Services.AddSingleton<InstagramUploader>();
     builder.Services.AddHostedService<ConsoleMenu>();
 
     var host = builder.Build();

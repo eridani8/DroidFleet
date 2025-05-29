@@ -1,5 +1,8 @@
-﻿namespace DroidFleet.Service;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace DroidFleet.Service;
+
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
 public class AppConfiguration
 {
     public string Code { get; set; } = string.Empty;

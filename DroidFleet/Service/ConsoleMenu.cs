@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net.Http.Headers;
 using DroidFleet.Extensions;
+using DroidFleet.Service.Scripts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -13,7 +14,7 @@ public class ConsoleMenu(
     IOptions<AppConfiguration> configuration,
     Style style,
     EmulatorHandler emulatorHandler,
-    UploadToInst uploadToInst,
+    InstagramUploader instagramUploader,
     IHostApplicationLifetime lifetime) : IHostedService
 {
     public const string AdbLogsPath = "adb_logs";
@@ -57,10 +58,13 @@ public class ConsoleMenu(
         const string openDirectory = "Открыть папку с видео";
         const string exit = "Выйти";
 
+        const string instUploader = "Instagram Uploader";
+        const string likeUploader = "Like Uploader";
+
         while (!lifetime.ApplicationStopping.IsCancellationRequested)
         {
             var choices = new SelectionPrompt<string>()
-                .Title("")
+                .Title("Выберите действие")
                 .HighlightStyle(style)
                 .AddChoices(scripts, openDirectory, exit);
             var prompt = AnsiConsole.Prompt(choices);
@@ -69,6 +73,25 @@ public class ConsoleMenu(
             {
                 switch (prompt)
                 {
+                    case scripts:
+                        
+                        var scryptChoices = new SelectionPrompt<string>()
+                            .Title("Выберите скрипт")
+                            .HighlightStyle(style)
+                            .AddChoices(instUploader, likeUploader);
+                        var scryptPrompt = AnsiConsole.Prompt(scryptChoices);
+
+                        switch (scryptPrompt)
+                        {
+                            case instUploader:
+                                await instagramUploader.Start();
+                                break;
+                            case likeUploader:
+                                
+                                break;
+                        }
+                        
+                        break;
                     case openDirectory:
                         Process.Start(new ProcessStartInfo(configuration.Value.DirectoriesPath) { UseShellExecute = true });
                         break;
@@ -82,12 +105,6 @@ public class ConsoleMenu(
                 Log.ForContext<ConsoleMenu>().Error(e, "Ошибка операции");
             }
         }
-
-        // await appHandler.EnteringParameters();
-        //
-        // await appHandler.Connect();
-        //
-        // await appHandler.Process();
     }
 
     #region MyRegion
