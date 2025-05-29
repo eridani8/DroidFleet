@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Net.Http.Headers;
-using AdvancedSharpAdbClient.Logs;
 using DroidFleet.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -13,10 +12,17 @@ public class ConsoleMenu(
     IHttpClientFactory clientFactory,
     IOptions<AppConfiguration> configuration,
     Style style,
-    AppHandler appHandler,
+    EmulatorHandler emulatorHandler,
+    UploadToInst uploadToInst,
     IHostApplicationLifetime lifetime) : IHostedService
 {
     public const string AdbLogsPath = "adb_logs";
+    public const string MediaDirectory = "storage/emulated/0/Pictures";
+    
+    public static readonly TimeSpan SmallDelay = TimeSpan.FromSeconds(2);
+    public static readonly TimeSpan MediumDelay = TimeSpan.FromSeconds(4);
+    public static readonly TimeSpan LongDelay = TimeSpan.FromSeconds(8);
+    
     private Task? _task;
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -44,6 +50,8 @@ public class ConsoleMenu(
     private async Task Worker()
     {
         await EnteringParameters();
+
+        await emulatorHandler.Connect();
         
         const string scripts = "Скрипты";
         const string openDirectory = "Открыть папку с видео";
@@ -81,7 +89,9 @@ public class ConsoleMenu(
         //
         // await appHandler.Process();
     }
-    
+
+    #region MyRegion
+
     private async Task<bool> CheckCode(string code)
     {
         var client = clientFactory.CreateClient("API");
@@ -97,8 +107,8 @@ public class ConsoleMenu(
         using var response = await client.SendAsync(request);
         return response.IsSuccessStatusCode;
     }
-    
-    public async Task EnteringParameters()
+
+    private async Task EnteringParameters()
     {
         Directory.CreateDirectory(AdbLogsPath);
 
@@ -263,4 +273,7 @@ public class ConsoleMenu(
 
         configuration.Value.Timeout = TimeSpan.FromMinutes(timeoutInMinutes);
     }
+
+    #endregion
+    
 }
