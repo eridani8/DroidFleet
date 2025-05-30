@@ -14,6 +14,7 @@ public class InstagramUploader(
     ILogger<InstagramUploader> logger) : ScryptBase(emulatorHandler, lifetime, style, configuration, logger)
 {
     protected override string AppName => "com.instagram.android";
+    
     protected override async Task Handle(DeviceClient device, int height, int width, CancellationTokenSource cts)
     {
         var creationTab = await device.FindElementAsync(

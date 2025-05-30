@@ -64,7 +64,7 @@ public abstract class ScryptBase(
         }
     }
 
-    public async Task HandleProcess(string avd, string directoryPath)
+    private async Task HandleProcess(string avd, string directoryPath)
     {
         using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
         try

@@ -59,7 +59,6 @@ public class ConsoleMenu(
         const string exit = "Выйти";
 
         const string instUploader = "Instagram Uploader";
-        const string likeUploader = "Like Uploader";
 
         while (!lifetime.ApplicationStopping.IsCancellationRequested)
         {
@@ -78,16 +77,13 @@ public class ConsoleMenu(
                         var scryptChoices = new SelectionPrompt<string>()
                             .Title("Выберите скрипт")
                             .HighlightStyle(style)
-                            .AddChoices(instUploader, likeUploader);
+                            .AddChoices(instUploader);
                         var scryptPrompt = AnsiConsole.Prompt(scryptChoices);
 
                         switch (scryptPrompt)
                         {
                             case instUploader:
                                 await instagramUploader.Start();
-                                break;
-                            case likeUploader:
-                                
                                 break;
                         }
                         
